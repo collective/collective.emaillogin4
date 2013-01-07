@@ -30,4 +30,9 @@ actually be mixed case, though that is not really by design, more a
 (happy) circumstance.
 
 This needs branch ``maurits-login-transform`` of
-``Products.PluggableAuthService``.
+``Products.PluggableAuthService`` and some changes to
+``plone.app.users`` and ``plone.app.controlpanel``.
+
+- TODO: change migration EmailView from plone.app.controlpanel.
+  Should be lots easier now.  Maybe do this automatically when
+  switching on emaillogin in the security panel.
