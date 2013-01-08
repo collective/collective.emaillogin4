@@ -145,19 +145,13 @@ def generate_login_name(self, data):
     if generator:
         login_name = generator(data)
         if login_name:
-            try:
-                login_name = pas.applyTransform(login_name)
-            except AttributeError:
-                pass
+            login_name = pas.applyTransform(login_name)
             data['login_name'] = login_name
             return login_name
 
     # We may have a username already.
     login_name = data.get('username')
-    try:
-        login_name = pas.applyTransform(login_name)
-    except AttributeError:
-        pass
+    login_name = pas.applyTransform(login_name)
     data['login_name'] = login_name
     portal_props = getToolByName(self.context, 'portal_properties')
     props = portal_props.site_properties
@@ -168,10 +162,7 @@ def generate_login_name(self, data):
 
     # We use email as login.
     login_name = data.get('email')
-    try:
-        login_name = pas.applyTransform(login_name)
-    except AttributeError:
-        pass
+    login_name = pas.applyTransform(login_name)
     data['login_name'] = login_name
     return login_name
 
