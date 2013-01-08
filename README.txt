@@ -155,11 +155,23 @@ this new property into account, using code like this::
 
 In the security panel of ``plone.app.controlpanel`` we change the
 ``set_use_email_as_login`` method to set ``login_transform`` to lower
-case when switching on email as login name.
+case when switching on email as login name.  For safety, we never
+change this back to the default empty string.  This is fine for normal
+non-email login names as well.
 
-- TODO: change migration EmailView from plone.app.controlpanel.
-  Should be lots easier now.  Maybe do this automatically when
-  switching on emaillogin in the security panel.
+Note that when ``login_transform`` is ``lower``, the end user can
+login with upper case ``JOE`` and he will then be logged in with login
+name ``joe``, as long as the password is correct of course.  If you
+somehow still have an upper or mixed case login name, you cannot
+login.  Setting the login_transform to a non empty string will
+automatically apply this transform to all existing logins in your
+database.
+
+We change the migration EmailView from ``plone.app.controlpanel``,
+which is a log easier now.
+
+TODO Maybe do this automatically when switching on emaillogin in the
+security panel.
 
 
 Set own login name
