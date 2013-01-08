@@ -57,8 +57,12 @@ def generate_user_id(self, data):
       will still be his old address.  It works, but may be
       confusing.
 
-    Another possibility would be to simply generate a uuid, but
-    that is ugly.
+    Another possibility would be to simply generate a uuid, but that
+    is ugly.  We could certainly try that though: the big plus here
+    would be that you then cannot create a new user with the same user
+    id as a previously existing user if this ever gets removed.  If
+    you would get the same id, this new user would get the same global
+    and local roles, if those have not been cleaned up.
 
     When a user id is chosen, the 'user_id' key of the data gets
     set and the user id is returned.
