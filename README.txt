@@ -79,7 +79,7 @@ user id:
 
 2. If ``use_uuid_as_userid`` is set in the site_properties, we
    generate a uuid.  This is a new property introduced by this
-   package.
+   package and can be set in the Security control panel.
 
 3. If a username is given and we do not use email as login,
    then we simply return that username as the user id.
@@ -179,13 +179,15 @@ Note that when ``login_transform`` is ``lower``, the end user can
 login with upper case ``JOE`` and he will then be logged in with login
 name ``joe``, as long as the password is correct of course.  If you
 somehow still have an upper or mixed case login name, you cannot
-login.  Setting the login_transform to a non empty string will
+login.
+
+Setting the login_transform to a non empty string will
 automatically apply this transform to all existing logins in your
 database.
 
 
 Control panels
---------------
+~~~~~~~~~~~~~~
 
 Switching email as login name on or off in the security panel now
 automatically updates existing login names.  It may fail when there
@@ -197,9 +199,12 @@ The updating of existing users used to be done in the
 search for duplicate login names.  You can search for duplicate email
 addresses or duplicate user ids, always lower case.
 
+The security panel now has an option 'Use UUID user ids', by default
+switched off.
+
 
 Set own login name
-------------------
+~~~~~~~~~~~~~~~~~~
 
 The ``Products.CMFPlone.utils.set_own_login_name`` method id
 drastically simplified, with the former code being moved to PAS
@@ -210,3 +215,28 @@ itself::
       """
       pas = getToolByName(member, 'acl_users')
       pas.updateOwnLoginName(loginname)
+
+
+Installation
+~~~~~~~~~~~~
+
+When installing this add-on in the Add-ons control panel, the
+following is done.
+
+- It adds the ``use_uuid_as_userid`` site property, by default False.
+
+- It registers the
+  ``Products.PluggableAuthService.interfaces.plugins.IUpdateLoginNamePlugin``
+  plugin interface in ``acl_users``.  This is a recent addition to
+  PAS.  It is registered by default when creating a fresh Plone Site,
+  but for existing Plone Sites this upgrade is needed.
+
+- It activates this ``IUpdateLoginNamePlugin`` interface for
+  ``source_users`` if this is not already done.  Again, in a fresh
+  Plone Site this is done automatically.
+
+- If email as login is already used in the site, we set
+  ``login_transform`` to ``lower``.  This could give an error and quit
+  the installation.  Maybe we want to catch this and just log a
+  warning.
+
