@@ -4,11 +4,23 @@ from collections import defaultdict
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
+from Products.CMFPlone import PloneMessageFactory as _
 
 from plone.app.controlpanel.security import SecurityControlPanelAdapter
 import plone.app.controlpanel.security
 
 logger = logging.getLogger('plone.app.controlpanel')
+
+# In the schema we need a different description.
+use_email_as_login_description = _(
+        u"Allows users to login with their email address instead "
+        u"of specifying a separate login name. This also updates "
+        u"the login name of existing users, which may take a "
+        u"while on large sites. The login name is saved as "
+        u"lower case, but to be userfriendly it does not matter "
+        u"which case you use to login. When duplicates are found, "
+        u"saving this form will fail. You can use the "
+        u"@@migrate-to-emaillogin page to show the duplicates.")
 
 
 def get_use_email_as_login(self):
@@ -157,3 +169,5 @@ SecurityControlPanelAdapter.get_use_email_as_login = get_use_email_as_login
 SecurityControlPanelAdapter.set_use_email_as_login = set_use_email_as_login
 SecurityControlPanelAdapter.use_email_as_login = use_email_as_login
 plone.app.controlpanel.security.EmailLogin = EmailLogin
+plone.app.controlpanel.security.ISecuritySchema[
+    'use_email_as_login'].description = use_email_as_login_description
