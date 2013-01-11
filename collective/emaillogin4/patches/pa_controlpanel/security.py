@@ -3,78 +3,117 @@ from collections import defaultdict
 
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
-from Products.Five import BrowserView
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.Five import BrowserView
+from zope.component import adapts
+from zope.formlib.form import FormFields
+from zope.interface import implements
+from zope.schema import Bool
 
-from plone.app.controlpanel.security import SecurityControlPanelAdapter
 import plone.app.controlpanel.security
 
 logger = logging.getLogger('plone.app.controlpanel')
 
-# In the schema we need a different description.
-use_email_as_login_description = _(
-        u"Allows users to login with their email address instead "
-        u"of specifying a separate login name. This also updates "
-        u"the login name of existing users, which may take a "
-        u"while on large sites. The login name is saved as "
-        u"lower case, but to be userfriendly it does not matter "
-        u"which case you use to login. When duplicates are found, "
-        u"saving this form will fail. You can use the "
-        u"@@migrate-to-emaillogin page to show the duplicates.")
+
+class ISecuritySchema(plone.app.controlpanel.security.ISecuritySchema):
+
+    # In the schema we need a different description.
+    use_email_as_login = Bool(
+        title=_(u'Use email address as login name'),
+        description = _(
+            u"Allows users to login with their email address instead "
+            u"of specifying a separate login name. This also updates "
+            u"the login name of existing users, which may take a "
+            u"while on large sites. The login name is saved as "
+            u"lower case, but to be userfriendly it does not matter "
+            u"which case you use to login. When duplicates are found, "
+            u"saving this form will fail. You can use the "
+            u"@@migrate-to-emaillogin page to show the duplicates."),
+        default=False,
+        required=False)
+
+    use_uuid_as_userid = Bool(
+        title=_(u'Use UUID user ids'),
+        description = _(
+            u"Use automatically generated UUIDs as user id for new users. "
+            u"When not turned on, the default is to use the same as the "
+            u"login name, or when using the email address as login name we "
+            u"generate a user id based on the fullname."),
+        default=False,
+        required=False)
 
 
-def get_use_email_as_login(self):
-    return self.context.use_email_as_login
+class SecurityControlPanelAdapter(plone.app.controlpanel.security.SecurityControlPanelAdapter):
 
+    adapts(IPloneSiteRoot)
+    implements(ISecuritySchema)
 
-def set_use_email_as_login(self, value):
-    context = aq_inner(self.context)
-    if context.getProperty('use_email_as_login') == value:
-        # no change
-        return
-    pas = getToolByName(context, 'acl_users')
-    if value:
-        # Change the property.
-        context.manage_changeProperties(use_email_as_login=True)
-        # We want the login name to be lowercase here.  This is new in PAS.
-        # Using 'manage_changeProperties' would change the login names
-        # immediately, but we want to do that ourselves and set the
-        # lowercase email address as login name, instead of the lower
-        # case user id.
-        #pas.manage_changeProperties(login_transform='lower')
-        pas.login_transform = 'lower'
-        # Update the users.
-        for user in pas.getUsers():
-            if user is None:
-                # Created in the ZMI?
-                continue
-            user_id = user.getUserId()
-            email = user.getProperty('email', '')
-            if email:
-                login_name = pas.applyTransform(email)
+    def get_use_email_as_login(self):
+        return self.context.use_email_as_login
+
+    def set_use_email_as_login(self, value):
+        context = aq_inner(self.context)
+        if context.getProperty('use_email_as_login') == value:
+            # no change
+            return
+        pas = getToolByName(context, 'acl_users')
+        if value:
+            # Change the property.
+            context.manage_changeProperties(use_email_as_login=True)
+            # We want the login name to be lowercase here.  This is new in PAS.
+            # Using 'manage_changeProperties' would change the login names
+            # immediately, but we want to do that ourselves and set the
+            # lowercase email address as login name, instead of the lower
+            # case user id.
+            #pas.manage_changeProperties(login_transform='lower')
+            pas.login_transform = 'lower'
+            # Update the users.
+            for user in pas.getUsers():
+                if user is None:
+                    # Created in the ZMI?
+                    continue
+                user_id = user.getUserId()
+                email = user.getProperty('email', '')
+                if email:
+                    login_name = pas.applyTransform(email)
+                    pas.updateLoginName(user_id, login_name)
+                else:
+                    logger.warn("User %s has no email address.", user_id)
+        else:
+            # Change the property.
+            self.context.manage_changeProperties(use_email_as_login=False)
+            # Whether the login name is lowercase or not does not really
+            # matter for this use case, but it may be better not to change
+            # it at this point.
+            #
+            # We do want to update the users.
+            for user in pas.getUsers():
+                if user is None:
+                    continue
+                user_id = user.getUserId()
+                # If we keep the transform to lowercase, then we must
+                # apply it here as well, otherwise some users will not be
+                # able to login.
+                login_name = pas.applyTransform(user_id)
                 pas.updateLoginName(user_id, login_name)
-            else:
-                logger.warn("User %s has no email address.", user_id)
-    else:
-        # Change the property.
-        self.context.manage_changeProperties(use_email_as_login=False)
-        # Whether the login name is lowercase or not does not really
-        # matter for this use case, but it may be better not to change
-        # it at this point.
-        #
-        # We do want to update the users.
-        for user in pas.getUsers():
-            if user is None:
-                continue
-            user_id = user.getUserId()
-            # If we keep the transform to lowercase, then we must
-            # apply it here as well, otherwise some users will not be
-            # able to login.
-            login_name = pas.applyTransform(user_id)
-            pas.updateLoginName(user_id, login_name)
 
-use_email_as_login = property(get_use_email_as_login,
-                              set_use_email_as_login)
+    use_email_as_login = property(get_use_email_as_login,
+                                  set_use_email_as_login)
+
+    def get_use_uuid_as_userid(self):
+        return self.context.site_properties.use_uuid_as_userid
+
+    def set_use_uuid_as_userid(self, value):
+        self.context.site_properties.use_uuid_as_userid = value
+
+    use_uuid_as_userid = property(get_use_uuid_as_userid,
+                                  set_use_uuid_as_userid)
+
+
+class SecurityControlPanel(plone.app.controlpanel.security.SecurityControlPanel):
+
+    form_fields = FormFields(ISecuritySchema)
 
 
 class EmailLogin(BrowserView):
@@ -162,12 +201,3 @@ class EmailLogin(BrowserView):
             userid = user.getUserId()
             success += self._update_login(userid, userid)
         return success
-
-
-# Patch it.
-SecurityControlPanelAdapter.get_use_email_as_login = get_use_email_as_login
-SecurityControlPanelAdapter.set_use_email_as_login = set_use_email_as_login
-SecurityControlPanelAdapter.use_email_as_login = use_email_as_login
-plone.app.controlpanel.security.EmailLogin = EmailLogin
-plone.app.controlpanel.security.ISecuritySchema[
-    'use_email_as_login'].description = use_email_as_login_description

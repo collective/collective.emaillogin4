@@ -7,6 +7,9 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
+  <include package="plone.app.users" />
+  <include package="plone.app.controlpanel" />
+
   <genericsetup:registerProfile
       name="default"
       title="collective.emaillogin4"

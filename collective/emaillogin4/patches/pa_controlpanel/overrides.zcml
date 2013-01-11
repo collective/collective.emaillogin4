@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <adapter factory=".security.SecurityControlPanelAdapter"
+           provides=".security.ISecuritySchema"/>
+
+  <browser:page
+      name="security-controlpanel"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".security.SecurityControlPanel"
+      permission="plone.app.controlpanel.Security"
+      />
+
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="migrate-to-emaillogin"
+      class=".security.EmailLogin"
+      template="emaillogin.pt"
+      permission="cmf.ManagePortal"
+      />
+
+</configure>
