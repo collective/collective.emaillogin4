@@ -183,11 +183,19 @@ login.  Setting the login_transform to a non empty string will
 automatically apply this transform to all existing logins in your
 database.
 
-We change the migration EmailView from ``plone.app.controlpanel``,
-which is a log easier now.
 
-TODO Maybe do this automatically when switching on emaillogin in the
-security panel.
+Control panels
+--------------
+
+Switching email as login name on or off in the security panel now
+automatically updates existing login names.  It may fail when there
+are duplicates.
+
+The updating of existing users used to be done in the
+``@@migrate-to-emaillogin`` view (class ``EmailView``) from
+``plone.app.controlpanel``.  We have simplified this page to only
+search for duplicate login names.  You can search for duplicate email
+addresses or duplicate user ids, always lower case.
 
 
 Set own login name

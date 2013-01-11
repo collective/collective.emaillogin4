@@ -118,19 +118,19 @@ class SecurityControlPanel(plone.app.controlpanel.security.SecurityControlPanel)
 
 class EmailLogin(BrowserView):
     """View to help in migrating to or from using email as login.
+
+    We used to change the login name of existing users here, but that
+    is now done by checking or unchecking the option in the security
+    control panel.  Here you can only search for duplicates.
     """
 
     duplicates = []
-    switched_to_email = 0
-    switched_to_userid = 0
 
     def __call__(self):
-        if self.request.form.get('check'):
-            self.duplicates = self.check_duplicates()
-        if self.request.form.get('switch_to_email'):
-            self.switched_to_email = self.switch_to_email()
-        if self.request.form.get('switch_to_userid'):
-            self.switched_to_userid = self.switch_to_userid()
+        if self.request.form.get('check_email'):
+            self.duplicates = self.check_email()
+        elif self.request.form.get('check_userid'):
+            self.duplicates = self.check_userid()
         return self.index()
 
     @property
@@ -161,15 +161,7 @@ class EmailLogin(BrowserView):
             pas.login_transform = orig_transform
             return emails
 
-    def _update_login(self, userid, login):
-        """Update login name of user.
-        """
-        pas = getToolByName(self.context, 'acl_users')
-        pas.updateLoginName(userid, login)
-        logger.info("Gave user id %s login name %s", userid, login)
-        return 1
-
-    def check_duplicates(self):
+    def check_email(self):
         duplicates = []
         for email, userids in self._email_list.items():
             if len(userids) > 1:
@@ -179,25 +171,34 @@ class EmailLogin(BrowserView):
 
         return duplicates
 
-    def switch_to_email(self):
-        success = 0
-        for email, userids in self._email_list.items():
-            if len(userids) > 1:
-                logger.warn("Not setting login name for accounts with same "
-                            "email address %s: %r", email, userids)
-                continue
-            for userid in userids:
-                success += self._update_login(userid, email)
-        return success
-
-    def switch_to_userid(self):
+    @property
+    def _userid_list(self):
+        # user ids are unique, but their lowercase version might not
+        # be unique.
         context = aq_inner(self.context)
         pas = getToolByName(context, 'acl_users')
-        success = 0
-        for user in pas.getUsers():
-            if user is None:
-                # Created in the ZMI?
-                continue
-            userid = user.getUserId()
-            success += self._update_login(userid, userid)
-        return success
+        userids = defaultdict(list)
+        orig_transform = pas.login_transform
+        try:
+            if not orig_transform:
+                # Temporarily set this to lower, as that will happen
+                # when turning emaillogin on.
+                pas.login_transform = 'lower'
+            for user in pas.getUsers():
+                if user is None:
+                    continue
+                login_name = pas.applyTransform(user.getUserName())
+                userids[login_name].append(user.getUserId())
+        finally:
+            pas.login_transform = orig_transform
+            return userids
+
+    def check_userid(self):
+        duplicates = []
+        for login_name, userids in self._userid_list.items():
+            if len(userids) > 1:
+                logger.warn("Duplicate accounts for lower case user id "
+                            "%s: %r", login_name, userids)
+                duplicates.append((login_name, userids))
+
+        return duplicates
