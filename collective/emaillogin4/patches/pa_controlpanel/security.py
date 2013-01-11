@@ -50,14 +50,13 @@ class SecurityControlPanelAdapter(plone.app.controlpanel.security.SecurityContro
     implements(ISecuritySchema)
 
     def get_use_email_as_login(self):
-        return self.context.use_email_as_login
+        return self.context.getProperty('use_email_as_login')
 
     def set_use_email_as_login(self, value):
         context = aq_inner(self.context)
         if context.getProperty('use_email_as_login') == value:
             # no change
             return
-        pas = getToolByName(context, 'acl_users')
         if value:
             migrate_to_email_login(self.context)
         else:
@@ -67,10 +66,10 @@ class SecurityControlPanelAdapter(plone.app.controlpanel.security.SecurityContro
                                   set_use_email_as_login)
 
     def get_use_uuid_as_userid(self):
-        return self.context.use_uuid_as_userid
+        return self.context.getProperty('use_uuid_as_userid')
 
     def set_use_uuid_as_userid(self, value):
-        self.context.use_uuid_as_userid = value
+        self.context.manage_changeProperties(use_uuid_as_userid=value)
 
     use_uuid_as_userid = property(get_use_uuid_as_userid,
                                   set_use_uuid_as_userid)
