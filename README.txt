@@ -50,7 +50,19 @@ Control over user ids
 
 An ``IUserIdGenerator`` interface is defined.  This is used in the new
 ``generate_user_id`` method of the ``register`` browser view (also
-used when adding a new user as admin).
+used when adding a new user as admin).  Two samle implementations::
+
+  def uuid_userid_generator(data=None):
+      # Return a uuid, independent of the data.
+      # This is available in utils.py in the plone.app.users patches.
+      from zope.component import getUtility
+      from plone.uuid.interfaces import IUUIDGenerator
+      generator = getUtility(IUUIDGenerator)
+      return generator()
+
+  def login_name_as_userid_generator(data):
+      # We like to keep it simple.
+      return data.get('username')
 
 In ``generate_user_id`` we try a few options for coming up with a good
 user id:
@@ -65,10 +77,14 @@ user id:
              data['user_id'] = userid
              return userid
 
-2. If a username is given and we do not use email as login,
+2. If ``use_uuid_as_userid`` is set in the site_properties, we
+   generate a uuid.  This is a new property introduced by this
+   package.
+
+3. If a username is given and we do not use email as login,
    then we simply return that username as the user id.
 
-3. We create a user id based on the full name, if that is
+4. We create a user id based on the full name, if that is
    passed.  This may result in an id like ``bob-jones-2``.
 
 When the email address is used as login name, we originally

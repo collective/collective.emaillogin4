@@ -29,6 +29,8 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 from plone.app.users.browser.register import BaseRegistrationForm
 
+from utils import uuid_userid_generator
+
 
 def generate_user_id(self, data):
     """Generate a user id from data.
@@ -38,10 +40,13 @@ def generate_user_id(self, data):
     1. We query a utility, so integrators can register a hook to
        generate a user id using their own logic.
 
-    2. If a username is given and we do not use email as login,
+    2. If use_uuid_as_userid is set in the site_properties, we
+       generate a uuid.
+
+    3. If a username is given and we do not use email as login,
        then we simply return that username as the user id.
 
-    3. We create a user id based on the full name, if that is
+    4. We create a user id based on the full name, if that is
        passed.  This may result in an id like bob-jones-2.
 
     When the email address is used as login name, we originally
@@ -74,12 +79,17 @@ def generate_user_id(self, data):
             data['user_id'] = userid
             return userid
 
+    portal_props = getToolByName(self.context, 'portal_properties')
+    props = portal_props.site_properties
+    if props.getProperty('use_uuid_as_userid'):
+        userid = uuid_userid_generator()
+        data['user_id'] = userid
+        return userid
+
     # We may have a username already.
     userid = data.get('username')
     if userid:
         # If we are not using email as login, then this user name is fine.
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
         if not props.getProperty('use_email_as_login'):
             data['user_id'] = userid
             return userid
