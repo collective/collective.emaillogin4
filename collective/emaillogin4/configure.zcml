@@ -17,6 +17,12 @@
       description="Installs the collective.emaillogin4 package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-  <!-- -*- extra stuff goes here -*- -->
+
+  <genericsetup:importStep
+      name="collective.emaillogin4.various"
+      title="Collective Email Login for Plone 4"
+      description="Various non-standard import steps."
+      handler="collective.emaillogin4.setuphandlers.setup_various"
+      />
   
 </configure>
