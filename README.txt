@@ -240,3 +240,5 @@ following is done.
   the installation.  Maybe we want to catch this and just log a
   warning.
 
+- It explicitly enables email as login name.  This would *not* be done
+  when merging this package back to core Plone.
