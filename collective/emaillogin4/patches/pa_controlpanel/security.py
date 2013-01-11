@@ -87,17 +87,28 @@ class EmailLogin(BrowserView):
         context = aq_inner(self.context)
         pas = getToolByName(context, 'acl_users')
         emails = defaultdict(list)
-        for user in pas.getUsers():
-            if user is None:
-                # Created in the ZMI?
-                continue
-            email = user.getProperty('email', '')
-            if email:
-                email = pas.applyTransform(email)
+        orig_transform = pas.login_transform
+        try:
+            if not orig_transform:
+                # Temporarily set this to lower, as that will happen
+                # when turning emaillogin on.
+                pas.login_transform = 'lower'
+            for user in pas.getUsers():
+                if user is None:
+                    # Created in the ZMI?
+                    continue
+                email = user.getProperty('email', '')
+                if email:
+                    email = pas.applyTransform(email)
+                else:
+                    logger.warn("User %s has no email address.",
+                                user.getUserId())
+                    # Add the normal login name anyway.
+                    email = pas.applyTransform(user.getUserName())
                 emails[email].append(user.getUserId())
-            else:
-                logger.warn("User %s has no email address.", user.getUserId())
-        return emails
+        finally:
+            pas.login_transform = orig_transform
+            return emails
 
     def _update_login(self, userid, login):
         """Update login name of user.
