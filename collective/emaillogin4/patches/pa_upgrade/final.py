@@ -44,8 +44,13 @@ def to424_pas_interfaces(context):
     logger.info("Registered IUpdateLoginNamePlugin type.")
 
     plugins = pas._getOb('plugins')
-    plugins.activatePlugin(IUpdateLoginNamePlugin, 'source_users')
-    logger.info("Activated IUpdateLoginNamePlugin for source_users.")
+    try:
+        plugins.activatePlugin(IUpdateLoginNamePlugin, 'source_users')
+    except KeyError:
+        # Already activated.
+        pass
+    else:
+        logger.info("Activated IUpdateLoginNamePlugin for source_users.")
 
     ptool = getToolByName(context, 'portal_properties')
     if ptool.site_properties.getProperty('use_email_as_login'):
