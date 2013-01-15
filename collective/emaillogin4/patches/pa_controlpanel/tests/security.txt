@@ -10,7 +10,7 @@ Enable uuid as user id:
 
     >>> from Products.CMFCore.utils import getToolByName
     >>> site_props = getToolByName(self.portal, 'portal_properties').site_properties
-    >>> site_props.use_uuid_as_userid
+    >>> site_props.getProperty('use_uuid_as_userid')
     False
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl(name='form.use_uuid_as_userid').value
@@ -21,5 +21,5 @@ Enable uuid as user id:
     True
     >>> browser.getControl(name='form.use_uuid_as_userid').value
     True
-    >>> site_props.use_uuid_as_userid
+    >>> site_props.getProperty('use_uuid_as_userid')
     True

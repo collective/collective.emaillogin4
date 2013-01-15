@@ -1,3 +1,5 @@
+from Products.CMFCore.utils import getToolByName
+
 from patches.pa_upgrade.final import to424_pas_interfaces
 from patches.pa_controlpanel.security import migrate_to_email_login
 
