@@ -329,6 +329,11 @@ def handle_join_success(self, data):
     user_id = data.get('user_id', data.get('username'))
     login_name = data.get('login_name', data.get('username'))
 
+    # Set the username for good measure, as action_join in the
+    # AddUserForm expects it to exist and contain the user id and that
+    # method is a bit harder to patch.
+    data['username'] = user_id
+
     # The login name may already be in the form, but not
     # necessarily, for example when using email as login.  This is
     # at least needed for logging in immediately when password
