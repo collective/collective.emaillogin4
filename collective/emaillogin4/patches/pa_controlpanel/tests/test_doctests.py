@@ -4,24 +4,25 @@ from unittest import TestSuite
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 
-from plone.app.controlpanel.tests.cptc import ControlPanelTestCase
-
+from plone.app.controlpanel.tests.cptc import UserGroupsControlPanelTestCase
 setupPloneSite()
 
 OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 
-class SecurityControlPanelTestCase(ControlPanelTestCase):
+class SecurityControlPanelTestCase(UserGroupsControlPanelTestCase):
     """Install collective.emaillogin4.
 
     This switches on email as login and adds a use_uuid_as_userid property.
+
+    Note that the afterSetUp of the UserGroupsControlPanelTestCase
+    creates several dozen users.  This might flush out a few bugs.
     """
 
     def afterSetUp(self):
         super(SecurityControlPanelTestCase, self).afterSetUp()
         qi = getattr(self.portal, 'portal_quickinstaller')
         qi.installProduct('collective.emaillogin4')
-
 
     def loginAsManager(self, user='root', pwd='secret'):
         """points the browser to the login screen and logs in as user root with Manager role."""

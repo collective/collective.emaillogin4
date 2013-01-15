@@ -20,6 +20,19 @@ Check some initial settings:
     >>> browser.getControl(name='form.use_email_as_login').value
     True
 
+Several dozen users are created by the test setup.  Our installation
+code changes their login name to their email address.  Let's check a
+few things:
+
+    >>> pas = getToolByName(self.portal, 'acl_users')
+    >>> len(pas.getUsers()) > 50
+    True
+    >>> for user in pas.getUsers():
+    ...     self.assertEqual(user.getUserName(), user.getUserName().lower())
+    ...     if user.getId() in ('root', 'test_user_1_'):
+    ...         continue
+    ...     self.assertTrue('@' in user.getUserName())
+
 Enable uuid as user id:
 
     >>> browser.getControl(name='form.use_uuid_as_userid').value = True
@@ -51,7 +64,6 @@ Create a new user:
     >>> browser.getControl('Password').value = 'foobar'
     >>> browser.getControl('Confirm password').value = 'foobar'
     >>> browser.getControl('Register').click()
-    >>> pas = getToolByName(self.portal, 'acl_users')
     >>> len(pas.searchUsers(name='newie'))
     1
 
@@ -112,7 +124,6 @@ Create a new user.  This should get a user id based on the full name:
     >>> browser.getControl('Password').value = 'foobar'
     >>> browser.getControl('Confirm password').value = 'foobar'
     >>> browser.getControl('Register').click()
-    >>> pas = getToolByName(self.portal, 'acl_users')
     >>> len(pas.searchUsers(name='UserTwo@Example.Com'))
     1
     >>> user = pas.getUser('UserTwo@Example.Com')
