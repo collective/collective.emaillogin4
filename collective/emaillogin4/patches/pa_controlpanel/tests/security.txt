@@ -1,0 +1,25 @@
+Security controlpanel
+=====================
+
+First some initial setup code. We are logging as the 'root' user with 'Manager' permission:
+
+    >>> browser = self.browser
+    >>> self.loginAsManager()
+
+Enable uuid as user id:
+
+    >>> from Products.CMFCore.utils import getToolByName
+    >>> site_props = getToolByName(self.portal, 'portal_properties').site_properties
+    >>> site_props.use_uuid_as_userid
+    False
+    >>> browser.open('http://nohost/plone/@@security-controlpanel')
+    >>> browser.getControl(name='form.use_uuid_as_userid').value
+    False
+    >>> browser.getControl(name='form.use_uuid_as_userid').value = True
+    >>> browser.getControl(name="form.actions.save").click()
+    >>> browser.url.endswith('security-controlpanel')
+    True
+    >>> browser.getControl(name='form.use_uuid_as_userid').value
+    True
+    >>> site_props.use_uuid_as_userid
+    True
