@@ -1,1 +1,5 @@
-For tests, see the tests directories of the patches.
+For most tests, see the tests directories of the patches.  Those are
+intended to be merged back to their respective packages.
+
+In tests.py we have a few tests specifically for this package, where
+we also explicitly enable email as login.
