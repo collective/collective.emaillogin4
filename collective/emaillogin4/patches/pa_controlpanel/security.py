@@ -216,3 +216,15 @@ class EmailLogin(BrowserView):
                 duplicates.append((login_name, userids))
 
         return duplicates
+
+    def switch_to_email(self):
+        # This is not used and is only here for backwards
+        # compatibility.  It avoids a test failure in
+        # Products.CMFPlone.
+        migrate_to_email_login(self.context)
+
+    def switch_to_userid(self):
+        # This is not used and is only here for backwards
+        # compatibility.  It avoids a test failure in
+        # Products.CMFPlone.
+        migrate_from_email_login(self.context)
