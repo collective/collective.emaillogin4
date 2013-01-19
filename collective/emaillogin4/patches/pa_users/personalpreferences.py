@@ -45,3 +45,9 @@ def validate(self, action, data):
 
 # Patch it.
 UserDataPanel.validate = validate
+
+# We may be too late with patching set_own_login_name in CMFPlone, as
+# p.a.users may have imported the original function already.
+from collective.emaillogin4.patches.cmfplone.utils import set_own_login_name
+import plone.app.users.browser.personalpreferences
+plone.app.users.browser.personalpreferences.set_own_login_name = set_own_login_name
