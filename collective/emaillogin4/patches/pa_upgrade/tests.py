@@ -8,22 +8,9 @@ from collective.emaillogin4.patches.pa_upgrade.final import to424_pas_interfaces
 class PASUpgradeTest(MigrationTest):
 
     def test_double_upgrade(self):
-        # A freshly created acl_users is perfectly fine.  An old
-        # acl_users will miss the IUpdateLoginNamePlugin.  It is too
-        # hard to first break a working PAS and then see if our
-        # upgrade fixes it.  Let's at least check that calling our
-        # upgrade twice does no harm and leads to the correct end
-        # result.
+        # Check that calling our upgrade twice does no harm.
         to424_pas_interfaces(self.portal)
         to424_pas_interfaces(self.portal)
-
-        from Products.PluggableAuthService.interfaces.plugins import \
-            IUpdateLoginNamePlugin
-        pas = getToolByName(self.portal, 'acl_users')
-        self.assertTrue(IUpdateLoginNamePlugin in pas.plugins._plugin_types)
-        self.assertEqual(len(pas.plugins.listPlugins(IUpdateLoginNamePlugin)), 1)
-        plugin_id, plugin = pas.plugins.listPlugins(IUpdateLoginNamePlugin)[0]
-        self.assertEqual(plugin_id, 'source_users')
 
     def test_upgrade_with_email_login(self):
         pas = getToolByName(self.portal, 'acl_users')

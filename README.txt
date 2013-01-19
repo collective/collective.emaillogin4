@@ -225,16 +225,6 @@ following is done.
 
 - It adds the ``use_uuid_as_userid`` site property, by default False.
 
-- It registers the
-  ``Products.PluggableAuthService.interfaces.plugins.IUpdateLoginNamePlugin``
-  plugin interface in ``acl_users``.  This is a recent addition to
-  PAS.  It is registered by default when creating a fresh Plone Site,
-  but for existing Plone Sites this upgrade is needed.
-
-- It activates this ``IUpdateLoginNamePlugin`` interface for
-  ``source_users`` if this is not already done.  Again, in a fresh
-  Plone Site this is done automatically.
-
 - If email as login is already used in the site, we set
   ``login_transform`` to ``lower``.  This could give an error and quit
   the installation.  Maybe we want to catch this and just log a
