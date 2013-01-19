@@ -186,6 +186,21 @@ automatically apply this transform to all existing logins in your
 database.
 
 
+Updating login names
+--------------------
+
+We have a patch for the ``ZODBMutablePropertyProvider`` of
+``Products.PlonePAS`` that adds two new but empty methods required by
+the changed ``IUserEnumerationPlugin`` interface of PAS::
+
+  def updateUser(self, user_id, login_name):
+     pass
+
+
+  def updateEveryLoginName(self, quit_on_first_error=True):
+     pass
+
+
 Control panels
 ~~~~~~~~~~~~~~
 
