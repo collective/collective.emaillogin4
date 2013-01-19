@@ -4,6 +4,27 @@ from Products.CMFPlone import PloneMessageFactory as _
 from zope.formlib.interfaces import WidgetInputError
 
 from plone.app.users.browser.personalpreferences import UserDataPanel
+from plone.app.users.browser.personalpreferences import UserDataPanelAdapter
+
+
+def get_email(self):
+    # This is the same as original, but we need to override both the
+    # setter and the getter.
+    return self._getProperty('email')
+
+
+def set_email(self, value):
+    if value is None:
+        value = ''
+    props = getToolByName(self, 'portal_properties').site_properties
+    if props.getProperty('use_email_as_login'):
+        mt = getToolByName(self.context, 'portal_membership')
+        if self.context.getId() == mt.getAuthenticatedMember().getId():
+            set_own_login_name(self.context, value)
+        else:
+            pas = getToolByName(self.context, 'acl_users')
+            pas.updateLoginName(self.context.getId(), value)
+    return self.context.setMemberProperties({'email': value})
 
 
 def validate(self, action, data):
@@ -45,6 +66,9 @@ def validate(self, action, data):
 
 # Patch it.
 UserDataPanel.validate = validate
+UserDataPanelAdapter.get_email = get_email
+UserDataPanelAdapter.set_email = set_email
+UserDataPanelAdapter.email = property(get_email, set_email)
 
 # We may be too late with patching set_own_login_name in CMFPlone, as
 # p.a.users may have imported the original function already.
