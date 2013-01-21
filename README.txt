@@ -52,7 +52,7 @@ Control over user ids
 
 An ``IUserIdGenerator`` interface is defined.  This is used in the new
 ``generate_user_id`` method of the ``register`` browser view (also
-used when adding a new user as admin).  Two samle implementations::
+used when adding a new user as admin).  Two sample implementations::
 
   def uuid_userid_generator(data=None):
       # Return a uuid, independent of the data.
