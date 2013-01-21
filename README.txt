@@ -109,7 +109,7 @@ previously existing user if this ever gets removed.  If you would get
 the same id, this new user would get the same global and local roles,
 if those have not been cleaned up.
 
-When a user id is chosen, the 'user_id' key of the data gets
+When a user id is chosen, the `user_id` key of the data gets
 set and the user id is returned.
 
 These changes are intended to be merged to ``plone.app.users``.
@@ -148,7 +148,7 @@ In all cases, we call PAS.applyTransform on the login name, if
 that is defined.  This is a recent addition to PAS, currently
 under development.
 
-When a login name is chosen, the 'login_name' key of the data gets
+When a login name is chosen, the `login_name` key of the data gets
 set and the login name is returned.
 
 These changes are intended to be merged to ``plone.app.users``.
@@ -216,7 +216,7 @@ The updating of existing users used to be done in the
 search for duplicate login names.  You can search for duplicate email
 addresses or duplicate user ids, always lower case.
 
-The security panel now has an option 'Use UUID user ids', by default
+The security panel now has an option `Use UUID user ids`, by default
 switched off.
 
 
