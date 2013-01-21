@@ -6,7 +6,7 @@ their email address, using a setting in the Security control panel.
 This works fine out of the box.  Some improvements would be useful
 though that need some more careful consideration before being added to
 core Plone.  That is where this package comes in.
- 
+
 This is a temporary package with some fixes for when you want to use
 the email address of a user as login name in Plone 4.  It also
 introduces a few hooks for determining the user id and login name of a
