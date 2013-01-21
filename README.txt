@@ -187,6 +187,11 @@ Setting the login_transform to a non empty string will
 automatically apply this transform to all existing logins in your
 database.
 
+Note: when this is merged to core Plone, login names will not be
+transformed to lowercase by default.  The option will simply be
+available if the site admin wants it.  Switching on email as login
+will also switch on lowercase login names.
+
 
 Updating login names
 --------------------
@@ -223,7 +228,7 @@ switched off.
 Set own login name
 ~~~~~~~~~~~~~~~~~~
 
-The ``Products.CMFPlone.utils.set_own_login_name`` method id
+The ``Products.CMFPlone.utils.set_own_login_name`` method is
 drastically simplified, with the former code being moved to PAS
 itself::
 
