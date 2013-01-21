@@ -1,27 +1,29 @@
 Introduction
 ============
 
+Since Plone 4.0 you can configure Plone to allow users to login with
+their email address, using a setting in the Security control panel.
+This works fine out of the box.  Some improvements would be useful
+though that need some more careful consideration before being added to
+core Plone.  That is where this package comes in.
+ 
 This is a temporary package with some fixes for when you want to use
-the email address as login name in Plone 4.  Emaillogin in Plone 4
-should work fine out of the box without this package.  Some
-improvements would be useful though that need some more careful
-consideration before being added to core Plone.
+the email address of a user as login name in Plone 4.  It also
+introduces a few hooks for determining the user id and login name of a
+new user.
 
 
 Plone version
 -------------
 
-This package is tested with and developed for Plone 4.2.  It is
-probably fine to use in 4.0, 4.1 and 4.3 too.
+This package is tested with and developed for Plone 4.2 and 4.3.  It is
+probably fine to use in 4.0 and 4.1.
 
-For Plone 3, use the ``collective.emaillogin`` package.
+For Plone 3, you must use the ``collective.emaillogin`` package.
 
 
 What does this package do?
 --------------------------
-
-Or at least, what should it do when it is ready?
-
 
 Clearer separation between user id and login name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
