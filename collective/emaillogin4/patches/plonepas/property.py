@@ -19,5 +19,8 @@ def updateEveryLoginName(self, quit_on_first_error=True):
     pass
 
 
+# Note: this has already been added to PlonePAS, but has not been
+# released yet.  Also, it is nice not to get warnings about this when
+# using a Plone version that does not have the newer PlonePAS.
 ZODBMutablePropertyProvider.updateUser = updateUser
 ZODBMutablePropertyProvider.updateEveryLoginName = updateEveryLoginName

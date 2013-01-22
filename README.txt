@@ -207,6 +207,8 @@ the changed ``IUserEnumerationPlugin`` interface of PAS::
   def updateEveryLoginName(self, quit_on_first_error=True):
      pass
 
+This has been merged to ``Products.PlonePAS``.
+
 
 Control panels
 ~~~~~~~~~~~~~~
