@@ -8,9 +8,10 @@ Testing email address as login name
     >>> self.setMailHost()
 
     Configure the security.
+    >>> from Products.PloneTestCase.PloneTestCase import portal_owner, default_password
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Login Name').value = portal_owner
+    >>> browser.getControl('Password').value = default_password
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Enable self-registration').selected = True
@@ -54,11 +55,11 @@ Testing email address as login name
     True
     >>> browser.getLink(url='http://nohost/plone/logout').click()
 
-    We login as admin. The login form now has a different label for
+    We login as manager. The login form now has a different label for
     the login name.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('E-mail').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('E-mail').value = portal_owner
+    >>> browser.getControl('Password').value = default_password
     >>> browser.getControl('Log in').click()
 
     The user id is now bob-jones, based on the full name:

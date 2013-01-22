@@ -2,6 +2,7 @@ import doctest
 from unittest import TestSuite
 
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
+from Products.PloneTestCase.PloneTestCase import portal_owner, default_password
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 
 from plone.app.controlpanel.tests.cptc import UserGroupsControlPanelTestCase
@@ -24,7 +25,7 @@ class SecurityControlPanelTestCase(UserGroupsControlPanelTestCase):
         qi = getattr(self.portal, 'portal_quickinstaller')
         qi.installProduct('collective.emaillogin4')
 
-    def loginAsManager(self, user='root', pwd='secret'):
+    def loginAsManager(self, user=portal_owner, pwd=default_password):
         """points the browser to the login screen and logs in as user root with Manager role."""
         self.browser.open('http://nohost/plone/')
         self.browser.getLink('Log in').click()
