@@ -16,10 +16,30 @@ new user.
 Plone version
 -------------
 
-This package is tested with and developed for Plone 4.2 and 4.3.  It is
-probably fine to use in 4.0 and 4.1.
+This package is tested with Plone 4.1, 4.2 and 4.3.  It will not work
+in 4.0.
 
 For Plone 3, you must use the ``collective.emaillogin`` package.
+
+
+Dependencies
+------------
+
+We need a newer version of ``Products.PluggableAuthService`` than is
+available currently in the latest Plone versions.  Assuming you are
+using buildout for your Plone site, you need to add a line to a
+versions section::
+
+  Products.PluggableAuthService = 1.10.0
+
+Any version newer than this is fine as well.  If your Plone version
+already has this version or a newer one pinned, then you do not need
+to add this line.
+
+Note that at the time of writing this version was not yet available on
+PyPI.  It is expected soon, so `check there`_ what the latest version is.
+
+.. _`check there`: http://pypi.python.org/pypi/Products.PluggableAuthService
 
 
 What does this package do?
