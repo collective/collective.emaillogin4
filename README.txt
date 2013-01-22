@@ -251,14 +251,25 @@ Set own login name
 ~~~~~~~~~~~~~~~~~~
 
 The ``Products.CMFPlone.utils.set_own_login_name`` method is
-drastically simplified, with the former code being moved to PAS
+simplified, with much of the former code being moved to PAS
 itself::
 
   def set_own_login_name(member, loginname):
       """Allow the user to set his/her own login name.
+
+      If you have the Manage Users permission, you can update the login
+      name of another member too, though the name of this function is a
+      bit weird then.  Historical accident.
       """
       pas = getToolByName(member, 'acl_users')
-      pas.updateOwnLoginName(loginname)
+      mt = getToolByName(member, 'portal_membership')
+      if member.getId() == mt.getAuthenticatedMember().getId():
+          pas.updateOwnLoginName(loginname)
+          return
+      secman = getSecurityManager()
+      if not secman.checkPermission(ManageUsers, member):
+          raise Unauthorized('You can only change your OWN login name.')
+      pas.updateLoginName(member.getId(), loginname)
 
 
 Installation
