@@ -228,11 +228,13 @@ def validate_registration(self, action, data):
         # Skip this check if password fields already have an error
         if not 'password' in error_keys:
             password = self.widgets['password'].getInputValue()
-            if password and len(password) < 5:
-                err_str = _(u'Passwords must contain at least 5 letters.')
-                errors.append(WidgetInputError(
-                        'password', u'label_password', err_str))
-                self.widgets['password'].error = err_str
+            if password:
+                # Use PAS to test validity
+                err_str = registration.testPasswordValidity(password)
+                if err_str:
+                    errors.append(WidgetInputError('password',
+                                  u'label_password', err_str))
+                    self.widgets['password'].error = err_str
 
     email = ''
     try:
