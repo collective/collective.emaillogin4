@@ -330,6 +330,13 @@ def handle_join_success(self, data):
     # user_id and login_name should be in the data, but let's be safe.
     user_id = data.get('user_id', data.get('username'))
     login_name = data.get('login_name', data.get('username'))
+    # I have seen a unicode user id.  I cannot reproduce it, but let's
+    # make them strings, otherwise you run into trouble when with
+    # plone.session when trying to login.
+    if isinstance(user_id, unicode):
+        user_id = user_id.encode('utf8')
+    if isinstance(login_name, unicode):
+        login_name = login_name.encode('utf8')
 
     # Set the username for good measure, as action_join in the
     # AddUserForm expects it to exist and contain the user id and that

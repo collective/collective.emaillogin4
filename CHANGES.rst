@@ -4,7 +4,8 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Make sure user ids are strings, not unicode.
+  [maurits]
 
 
 1.1 (2013-01-23)
