@@ -364,17 +364,8 @@ def handle_join_success(self, data):
     if user_id != login_name:
         # The user id differs from the login name.  Set the login
         # name correctly.
-        acl_users = getToolByName(self.context, 'acl_users')
-        # XXX It would be cleaner to have this in pas.
-        for plugin_id, userfolder in acl_users.plugins.listPlugins(IUserManagement):
-            if not hasattr(userfolder, 'updateUser'):
-                continue
-            try:
-                userfolder.updateUser(user_id, login_name)
-            except KeyError:
-                continue
-            else:
-                break
+        pas = getToolByName(self.context, 'acl_users')
+        pas.updateLoginName(user_id, login_name)
 
     # set additional properties using the user schema adapter
     schema = getUtility(IUserDataSchemaProvider).getSchema()
