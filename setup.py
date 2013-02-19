@@ -27,7 +27,7 @@ setup(name='collective.emaillogin4',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Products.PluggableAuthService>1.9',
+          'Products.PluggableAuthService>=1.10.0',
       ],
       entry_points="""
       # -*- Entry points: -*-

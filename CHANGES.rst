@@ -4,7 +4,9 @@ Changelog
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Depend on ``Products.PluggableAuthService >= 1.10.0`` which has
+  been released recently.
+  [maurits]
 
 
 1.2 (2013-01-23)

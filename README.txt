@@ -36,11 +36,6 @@ Any version newer than this is fine as well.  If your Plone version
 already has this version or a newer one pinned, then you do not need
 to add this line.
 
-Note that at the time of writing this version was not yet available on
-PyPI.  It is expected soon, so `check there`_ what the latest version is.
-
-.. _`check there`: http://pypi.python.org/pypi/Products.PluggableAuthService
-
 
 What does this package do?
 --------------------------
