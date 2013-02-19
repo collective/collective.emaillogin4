@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3 (unreleased)
+1.3 (2013-02-19)
 ----------------
 
 - Depend on ``Products.PluggableAuthService >= 1.10.0`` which has
